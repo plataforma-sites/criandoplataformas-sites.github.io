@@ -3,113 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Criação de Sites por R$50</title>
+    <title>Criação de Sites Express</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .container { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 500px; width: 100%; }
-        h1 { font-size: 24px; margin-bottom: 5px; text-align: center; color: #2c3e50; }
-        p.subtitle { text-align: center; color: #7f8c8d; font-size: 14px; margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
-        input[type="text"], select, textarea, input[type="file"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
-        .url-preview { font-size: 12px; color: #27ae60; margin-top: 5px; display: block; }
-        .color-group { display: flex; gap: 15px; }
-        .color-group div { flex: 1; }
-        input[type="color"] { width: 100%; height: 40px; border: none; cursor: pointer; padding: 0; }
-        button { width: 100%; padding: 12px; background-color: #2980b9; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.3s; }
-        button:hover { background-color: #3498db; }
-        button:disabled { background-color: #95a5a6; cursor: not-allowed; }
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius: 10px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding: 30px 15px; display: flex; justify-content: center; }
+
+        .app-container { max-width: 650px; width: 100%; }
+
+        /* Branding Header */
+        .brand-header { text-align: center; margin-bottom: 25px; }
+        .brand-header h1 { font-size: 26px; font-weight: 700; color: var(--text); }
+        .brand-header p { color: var(--text-muted); font-size: 14px; margin-top: 5px; }
+        .price-badge { display: inline-block; background: #dcfce7; color: #15803d; font-weight: 700; padding: 4px 12px; border-radius: 20px; font-size: 13px; margin-top: 10px; }
+
+        /* Navigation Tabs */
+        .tabs { display: flex; background: #e2e8f0; padding: 4px; border-radius: var(--radius); margin-bottom: 20px; }
+        .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; font-weight: 600; font-size: 14px; color: var(--text-muted); cursor: pointer; border-radius: 8px; transition: all 0.2s; }
+        .tab-btn.active { background: var(--card-bg); color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+        /* Card Content */
+        .tab-content { display: none; background: var(--card-bg); padding: 25px; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .tab-content.active { display: block; }
+
+        .form-group { margin-bottom: 18px; }
+        label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 6px; color: #334155; }
+        input[type="text"], select, textarea, input[type="file"] { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; outline: none; }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+        .url-preview { font-size: 12px; color: #16a34a; margin-top: 4px; font-weight: 500; }
+
+        .color-row { display: flex; gap: 15px; }
+        .color-row div { flex: 1; }
+        input[type="color"] { width: 100%; height: 38px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; }
+
+        /* Presets Checkbox Grid */
+        .presets-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-top: 5px; }
+        .preset-item { display: flex; align-items: center; gap: 8px; background: #f1f5f9; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); font-size: 13px; cursor: pointer; }
+        .preset-item input { accent-color: var(--primary); }
+
+        .btn-submit { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 10px; }
+        .btn-submit:hover { background: var(--primary-hover); }
+
+        /* Chat / Status Layout */
+        .status-box { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 15px; margin-bottom: 15px; text-align: center; }
+        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+        .status-pendente { background: #fef3c7; color: #d97706; }
+        .status-producao { background: #dbeafe; color: #2563eb; }
+        .status-concluido { background: #dcfce7; color: #16a34a; }
+
+        .chat-history { height: 200px; border: 1px solid var(--border); border-radius: 6px; padding: 12px; overflow-y: auto; background: #fafafa; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .chat-msg { max-width: 80%; padding: 8px 12px; border-radius: 8px; font-size: 13px; line-height: 1.4; }
+        .chat-msg.user { background: var(--primary); color: white; align-self: flex-end; }
+        .chat-msg.admin { background: #e2e8f0; color: var(--text); align-self: flex-start; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Seu Site por R$ 50</h1>
-    <p class="subtitle">Página única (Landing Page) responsiva e hospedagem gratuita.</p>
+<div class="app-container">
+    <div class="brand-header">
+        <h1>Plataforma Web Express</h1>
+        <p>Criamos a sua Landing Page completa e hospedada no GitHub</p>
+        <span class="price-badge">Valor Fixo: R$ 50,00</span>
+    </div>
 
-    <form id="orderForm">
-        <div class="form-group">
-            <label for="siteName">Nome do Site (Link)</label>
-            <input type="text" id="siteName" required placeholder="ex: lanchonete-do-ze">
-            <span class="url-preview" id="urlPreview">Seu link será: github.io/</span>
-        </div>
+    <!-- Navegação por Abas -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('pedir')">1. Criar Meu Site</button>
+        <button class="tab-btn" onclick="switchTab('acompanhar')">2. Acompanhar / Alterar</button>
+    </div>
 
-        <div class="form-group color-group">
-            <div>
-                <label for="primaryColor">Cor Principal</label>
-                <input type="color" id="primaryColor" value="#3498db">
+    <!-- ABA 1: FORMULÁRIO DE PEDIDO -->
+    <div id="tab-pedir" class="tab-content active">
+        <form id="orderForm">
+            <div class="form-group">
+                <label for="siteName">Nome do Domínio (Link do Site)</label>
+                <input type="text" id="siteName" required placeholder="ex: barbearia-estilo">
+                <span class="url-preview" id="urlPreview">Seu link será: barbearia-estilo.github.io</span>
             </div>
-            <div>
-                <label for="secondaryColor">Cor Secundária</label>
-                <input type="color" id="secondaryColor" value="#2c3e50">
+
+            <div class="form-group color-row">
+                <div>
+                    <label for="primaryColor">Cor Principal</label>
+                    <input type="color" id="primaryColor" value="#2563eb">
+                </div>
+                <div>
+                    <label for="secondaryColor">Cor Secundária</label>
+                    <input type="color" id="secondaryColor" value="#0f172a">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="fontChoice">Tipografia Principal</label>
+                <select id="fontChoice">
+                    <option value="Inter">Inter (Moderna e Clean)</option>
+                    <option value="Roboto">Roboto (Versátil)</option>
+                    <option value="Montserrat">Montserrat (Marcante e Forte)</option>
+                    <option value="Playfair Display">Playfair Display (Elegante / Luxo)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Recursos Sugeridos (Selecione o que deseja incluir):</label>
+                <div class="presets-grid">
+                    <label class="preset-item"><input type="checkbox" value="Botão Flutuante do WhatsApp"> Botão WhatsApp</label>
+                    <label class="preset-item"><input type="checkbox" value="Seção de Serviços com Ícones"> Seção de Serviços</label>
+                    <label class="preset-item"><input type="checkbox" value="Tabela de Preços/Planos"> Tabela de Preços</label>
+                    <label class="preset-item"><input type="checkbox" value="Seção de Depoimentos de Clientes"> Depoimentos</label>
+                    <label class="preset-item"><input type="checkbox" value="Galeria de Fotos/Portfólio"> Galeria de Fotos</label>
+                    <label class="preset-item"><input type="checkbox" value="Perguntas Frequentes (FAQ Accordion)"> Seção FAQ</label>
+                    <label class="preset-item"><input type="checkbox" value="Formulário de Contato/Orçamento"> Form. de Contato</label>
+                    <label class="preset-item"><input type="checkbox" value="Rodapé com Links de Redes Sociais"> Redes Sociais</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="logoUpload">Logo da Empresa (Opcional)</label>
+                <input type="file" id="logoUpload" accept="image/png, image/jpeg">
+            </div>
+
+            <div class="form-group">
+                <label for="description">Detalhamento / Texto do Site (Máx 600 caracteres)</label>
+                <textarea id="description" rows="4" maxlength="600" required placeholder="Descreva o objetivo do seu negócio, os textos principais que deseja incluir e chamadas de ação."></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">Enviar Pedido para Produção</button>
+        </form>
+    </div>
+
+    <!-- ABA 2: ACOMPANHAR STATUS E CHAT -->
+    <div id="tab-acompanhar" class="tab-content">
+        <div class="form-group">
+            <label for="searchSiteName">Digite o Nome do Seu Site (Link)</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="searchSiteName" placeholder="ex: barbearia-estilo">
+                <button type="button" class="btn-submit" style="margin: 0; width: auto; padding: 0 20px;" onclick="fetchStatus()">Buscar</button>
             </div>
         </div>
 
-        <div class="form-group">
-            <label for="fontChoice">Tipografia (Fonte)</label>
-            <select id="fontChoice">
-                <option value="Roboto">Roboto (Moderna e Limpa)</option>
-                <option value="Montserrat">Montserrat (Elegante)</option>
-                <option value="Playfair Display">Playfair Display (Sofisticada)</option>
-            </select>
-        </div>
+        <div id="statusContainer" style="display: none;">
+            <div class="status-box">
+                <span id="displaySiteName" style="font-weight: 700;">site.github.io</span><br>
+                <span style="font-size: 13px; color: var(--text-muted);">Status Atual: </span>
+                <span class="status-badge status-pendente" id="statusBadge">Pendente</span>
+            </div>
 
-        <div class="form-group">
-            <label for="logoUpload">Sua Logo (Opcional)</label>
-            <input type="file" id="logoUpload" accept="image/png, image/jpeg">
-        </div>
+            <label>Histórico de Solicitações e Ajustes:</label>
+            <div class="chat-history" id="chatHistory">
+                <div class="chat-msg admin">Olá! O seu pedido foi recebido. Em breve começaremos a produção.</div>
+            </div>
 
-        <div class="form-group">
-            <label for="description">O que o site deve ter? (Máx 500 caracteres)</label>
-            <textarea id="description" rows="4" maxlength="500" required placeholder="Ex: Quero uma página para minha barbearia com uma seção sobre nós, serviços oferecidos e um botão para o WhatsApp."></textarea>
+            <div class="form-group">
+                <label for="chatInput">Solicitar Alteração / Ajuste no Site</label>
+                <textarea id="chatInput" rows="2" placeholder="Ex: Por favor, mude a cor do botão para um verde mais escuro e aumente o título principal."></textarea>
+                <button type="button" class="btn-submit" onclick="sendAdjustment()">Enviar Solicitação de Ajuste</button>
+            </div>
         </div>
-
-        <button type="submit" id="submitBtn">Enviar Pedido</button>
-    </form>
+    </div>
 </div>
 
 <script>
-    const siteNameInput = document.getElementById('siteName');
-    const urlPreview = document.getElementById('urlPreview');
     const webAppUrl = "https://script.google.com/macros/s/AKfycby4VrxWo72MCUHfBy8FiPUdOXAkRpilDe3g1mu5hbJXTI5jaNgwquZ8m-eGs1xtCHzoZA/exec";
 
-    siteNameInput.addEventListener('input', function(e) {
-        let formattedName = this.value.toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/\s+/g, '-');
-        this.value = formattedName;
-        urlPreview.textContent = formattedName ? `Seu link será: ${formattedName}.github.io` : 'Seu link será: github.io/';
+    // Controle de Abas
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        
+        if (tab === 'pedir') {
+            document.querySelectorAll('.tab-btn')[0].classList.add('active');
+            document.getElementById('tab-pedir').classList.add('active');
+        } else {
+            document.querySelectorAll('.tab-btn')[1].classList.add('active');
+            document.getElementById('tab-acompanhar').classList.add('active');
+        }
+    }
+
+    // Formatação de URL
+    const siteNameInput = document.getElementById('siteName');
+    const urlPreview = document.getElementById('urlPreview');
+    siteNameInput.addEventListener('input', function() {
+        let formatted = this.value.toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/\s+/g, '-');
+        this.value = formatted;
+        urlPreview.textContent = formatted ? `Seu link será: ${formatted}.github.io` : 'Seu link será: github.io';
     });
 
+    // Envio do Pedido
     document.getElementById('orderForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const btn = document.getElementById('submitBtn');
         btn.disabled = true;
-        btn.textContent = 'Enviando e processando arquivos...';
+        btn.textContent = 'Enviando especificações...';
+
+        // Captura checkboxes selecionados
+        const selectedPresets = Array.from(document.querySelectorAll('.presets-grid input:checked')).map(cb => cb.value);
 
         const fileInput = document.getElementById('logoUpload');
-        let logoBase64 = '';
-        let mimeType = '';
-        let fileName = '';
+        let logoBase64 = '', mimeType = '', fileName = '';
 
         if (fileInput.files.length > 0) {
             const file = fileInput.files[0];
             mimeType = file.type;
             fileName = file.name;
             const reader = new FileReader();
-            
-            await new Promise((resolve) => {
+            await new Promise(resolve => {
                 reader.readAsDataURL(file);
-                reader.onload = () => {
-                    logoBase64 = reader.result.split(',')[1];
-                    resolve();
-                };
+                reader.onload = () => { logoBase64 = reader.result.split(',')[1]; resolve(); };
             });
         }
 
         const payload = {
+            action: "createOrder",
             siteName: siteNameInput.value,
             primaryColor: document.getElementById('primaryColor').value,
             secondaryColor: document.getElementById('secondaryColor').value,
             font: document.getElementById('fontChoice').value,
+            presets: selectedPresets.join(', '),
             description: document.getElementById('description').value,
             logoBase64: logoBase64,
             mimeType: mimeType,
@@ -119,31 +238,81 @@
         try {
             const response = await fetch(webAppUrl, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'text/plain;charset=utf-8',
-                },
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(payload)
             });
-
             const result = await response.json();
-
             if(result.status === "sucesso") {
-                alert("Pedido recebido com sucesso! Nossa equipe já começou a trabalhar no seu site.");
+                alert("Pedido recebido com sucesso! Alterne para a aba 'Acompanhar' para verificar o status.");
                 document.getElementById('orderForm').reset();
-                urlPreview.textContent = 'Seu link será: github.io/';
             } else {
-                alert("Houve um erro no envio. Tente novamente.");
-                console.error(result.mensagem);
+                alert("Erro ao enviar pedido.");
             }
-        } catch (error) {
-            alert("Erro de conexão. Verifique sua internet e tente novamente.");
-            console.error(error);
+        } catch(err) {
+            alert("Erro de conexão.");
         }
-
         btn.disabled = false;
-        btn.textContent = 'Enviar Pedido';
+        btn.textContent = 'Enviar Pedido para Produção';
     });
-</script>
 
+    // Buscar Status e Histórico no Apps Script
+    async function fetchStatus() {
+        const query = document.getElementById('searchSiteName').value.trim().toLowerCase();
+        if(!query) return alert("Digite o nome do site.");
+
+        try {
+            const response = await fetch(`${webAppUrl}?siteName=${encodeURIComponent(query)}`);
+            const data = await response.json();
+
+            if (data.status === "encontrado") {
+                document.getElementById('statusContainer').style.display = 'block';
+                document.getElementById('displaySiteName').textContent = `${data.siteName}.github.io`;
+                
+                const badge = document.getElementById('statusBadge');
+                badge.textContent = data.statusPedido;
+                badge.className = `status-badge status-${data.statusPedido.toLowerCase().replace(' ', '')}`;
+
+                const chatBox = document.getElementById('chatHistory');
+                chatBox.innerHTML = '';
+                data.historico.forEach(msg => {
+                    const div = document.createElement('div');
+                    div.className = `chat-msg ${msg.autor}`;
+                    div.textContent = msg.texto;
+                    chatBox.appendChild(div);
+                });
+            } else {
+                alert("Pedido não encontrado. Verifique o nome digitado.");
+            }
+        } catch(e) {
+            alert("Erro ao consultar status.");
+        }
+    }
+
+    // Enviar Solicitação de Ajuste pelo Chat
+    async function sendAdjustment() {
+        const siteName = document.getElementById('searchSiteName').value.trim().toLowerCase();
+        const text = document.getElementById('chatInput').value.trim();
+        if(!text) return alert("Digite o ajuste desejado.");
+
+        const payload = {
+            action: "addAdjustment",
+            siteName: siteName,
+            adjustmentText: text
+        };
+
+        try {
+            await fetch(webAppUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            });
+            alert("Ajuste solicitado com sucesso! Vamos analisar e atualizar seu site.");
+            document.getElementById('chatInput').value = '';
+            fetchStatus(); // Atualiza a lista
+        } catch(e) {
+            alert("Erro ao enviar mensagem.");
+        }
+    }
+</script>
 </body>
 </html>
