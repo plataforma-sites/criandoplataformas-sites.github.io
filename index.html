@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criação de Sites por R$50</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 500px; width: 100%; }
+        h1 { font-size: 24px; margin-bottom: 5px; text-align: center; color: #2c3e50; }
+        p.subtitle { text-align: center; color: #7f8c8d; font-size: 14px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
+        input[type="text"], select, textarea, input[type="file"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+        .url-preview { font-size: 12px; color: #27ae60; margin-top: 5px; display: block; }
+        .color-group { display: flex; gap: 15px; }
+        .color-group div { flex: 1; }
+        input[type="color"] { width: 100%; height: 40px; border: none; cursor: pointer; padding: 0; }
+        button { width: 100%; padding: 12px; background-color: #2980b9; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.3s; }
+        button:hover { background-color: #3498db; }
+        button:disabled { background-color: #95a5a6; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Seu Site por R$ 50</h1>
+    <p class="subtitle">Página única (Landing Page) responsiva e hospedagem gratuita.</p>
+
+    <form id="orderForm">
+        <div class="form-group">
+            <label for="siteName">Nome do Site (Link)</label>
+            <input type="text" id="siteName" required placeholder="ex: lanchonete-do-ze">
+            <span class="url-preview" id="urlPreview">Seu link será: github.io/</span>
+        </div>
+
+        <div class="form-group color-group">
+            <div>
+                <label for="primaryColor">Cor Principal</label>
+                <input type="color" id="primaryColor" value="#3498db">
+            </div>
+            <div>
+                <label for="secondaryColor">Cor Secundária</label>
+                <input type="color" id="secondaryColor" value="#2c3e50">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="fontChoice">Tipografia (Fonte)</label>
+            <select id="fontChoice">
+                <option value="Roboto">Roboto (Moderna e Limpa)</option>
+                <option value="Montserrat">Montserrat (Elegante)</option>
+                <option value="Playfair Display">Playfair Display (Sofisticada)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="logoUpload">Sua Logo (Opcional)</label>
+            <input type="file" id="logoUpload" accept="image/png, image/jpeg">
+        </div>
+
+        <div class="form-group">
+            <label for="description">O que o site deve ter? (Máx 500 caracteres)</label>
+            <textarea id="description" rows="4" maxlength="500" required placeholder="Ex: Quero uma página para minha barbearia com uma seção sobre nós, serviços oferecidos e um botão para o WhatsApp."></textarea>
+        </div>
+
+        <button type="submit" id="submitBtn">Enviar Pedido</button>
+    </form>
+</div>
+
+<script>
+    // Validação em tempo real do link do GitHub Pages
+    const siteNameInput = document.getElementById('siteName');
+    const urlPreview = document.getElementById('urlPreview');
+
+    siteNameInput.addEventListener('input', function(e) {
+        let formattedName = this.value.toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/\s+/g, '-');
+        this.value = formattedName;
+        urlPreview.textContent = formattedName ? `Seu link será: ${formattedName}.github.io` : 'Seu link será: github.io/';
+    });
+
+    // Captura dos dados e conversão da imagem
+    document.getElementById('orderForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.textContent = 'Processando...';
+
+        const fileInput = document.getElementById('logoUpload');
+        let logoBase64 = '';
+        let mimeType = '';
+        let fileName = '';
+
+        if (fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            mimeType = file.type;
+            fileName = file.name;
+            const reader = new FileReader();
+            
+            reader.readAsDataURL(file);
+            await new Promise(resolve => reader.onload = () => {
+                logoBase64 = reader.result.split(',')[1];
+                resolve();
+            });
+        }
+
+        const payload = {
+            siteName: siteNameInput.value,
+            primaryColor: document.getElementById('primaryColor').value,
+            secondaryColor: document.getElementById('secondaryColor').value,
+            font: document.getElementById('fontChoice').value,
+            description: document.getElementById('description').value,
+            logoBase64: logoBase64,
+            mimeType: mimeType,
+            fileName: fileName
+        };
+
+        // Alerta provisório antes de criarmos o Banco de Dados
+        alert("Especificações capturadas com sucesso! Na próxima etapa vamos conectar isso ao Google Sheets.");
+        console.log(payload);
+
+        btn.disabled = false;
+        btn.textContent = 'Enviar Pedido';
+    });
+</script>
+
+</body>
+</html>
