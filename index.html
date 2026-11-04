@@ -69,9 +69,9 @@
 </div>
 
 <script>
-    // Validação em tempo real do link do GitHub Pages
     const siteNameInput = document.getElementById('siteName');
     const urlPreview = document.getElementById('urlPreview');
+    const webAppUrl = "https://script.google.com/macros/s/AKfycby4VrxWo72MCUHfBy8FiPUdOXAkRpilDe3g1mu5hbJXTI5jaNgwquZ8m-eGs1xtCHzoZA/exec";
 
     siteNameInput.addEventListener('input', function(e) {
         let formattedName = this.value.toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/\s+/g, '-');
@@ -79,12 +79,11 @@
         urlPreview.textContent = formattedName ? `Seu link será: ${formattedName}.github.io` : 'Seu link será: github.io/';
     });
 
-    // Captura dos dados e conversão da imagem
     document.getElementById('orderForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const btn = document.getElementById('submitBtn');
         btn.disabled = true;
-        btn.textContent = 'Processando...';
+        btn.textContent = 'Enviando e processando arquivos...';
 
         const fileInput = document.getElementById('logoUpload');
         let logoBase64 = '';
@@ -97,10 +96,12 @@
             fileName = file.name;
             const reader = new FileReader();
             
-            reader.readAsDataURL(file);
-            await new Promise(resolve => reader.onload = () => {
-                logoBase64 = reader.result.split(',')[1];
-                resolve();
+            await new Promise((resolve) => {
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    logoBase64 = reader.result.split(',')[1];
+                    resolve();
+                };
             });
         }
 
@@ -115,9 +116,29 @@
             fileName: fileName
         };
 
-        // Alerta provisório antes de criarmos o Banco de Dados
-        alert("Especificações capturadas com sucesso! Na próxima etapa vamos conectar isso ao Google Sheets.");
-        console.log(payload);
+        try {
+            const response = await fetch(webAppUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8',
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if(result.status === "sucesso") {
+                alert("Pedido recebido com sucesso! Nossa equipe já começou a trabalhar no seu site.");
+                document.getElementById('orderForm').reset();
+                urlPreview.textContent = 'Seu link será: github.io/';
+            } else {
+                alert("Houve um erro no envio. Tente novamente.");
+                console.error(result.mensagem);
+            }
+        } catch (error) {
+            alert("Erro de conexão. Verifique sua internet e tente novamente.");
+            console.error(error);
+        }
 
         btn.disabled = false;
         btn.textContent = 'Enviar Pedido';
